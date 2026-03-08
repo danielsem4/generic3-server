@@ -1,0 +1,48 @@
+Django==4.2
+djangorestframework==3.14.0
+markdown==3.5.2       # Markdown support for the browsable API.
+django-filter==23.5   # Filtering support
+django-cors-headers==3.11.0
+django-dotenv==1.4.2
+requests~=2.27.1
+django-crispy-forms
+channels[daphne]==4.0.0
+daphne==4.0.0
+asgiref==3.7.2
+channels-postgres==1.0.4
+djangorestframework-simplejwt
+django-debug-toolbar
+django-bootstrap-form
+django-user-sessions
+django-otp
+django-otp[email,totp,static]==1.3.0
+django-two-factor-auth[webauthn,phonenumbers]==1.15.5
+djangorestframework-simplejwt
+django-two-factor-auth
+openpyxl
+python-dotenv
+boto3
+pandas
+numpy
+django-environ==0.12.0 # Environment variables
+django-extensions
+django-push-notifications
+firebase-admin
+pandas # ~=2.2
+XlsxWriter #~=3.2
+python-dateutil
+django-cors-headers
+
+# Testing packages
+pytest==7.4.3
+pytest-django==4.7.0
+pytest-cov==4.1.0
+factory-boy==3.3.0
+faker==22.0.0
+pytest-mock==3.12.0
+
+# Additional packages for server rendering
+gunicorn
+whitenoise
+dj-database-url
+psycopg2-binary

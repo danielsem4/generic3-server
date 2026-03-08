@@ -1,0 +1,1 @@
+web: gunicorn generic3.wsgi:application --timeout 120

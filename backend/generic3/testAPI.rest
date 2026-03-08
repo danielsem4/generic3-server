@@ -1,0 +1,1041 @@
+######################## Authentication API calls ########################
+
+# ============ SESSION MANAGEMENT ============
+
+# Create session (Login)
+POST http://localhost:8000/api/v1/auth/sessions/
+Content-Type: application/json
+
+# {
+#     "email": "clinicManager4@example.com",
+#     "password": "a123456!"
+# }
+
+{
+    "email": "doctor1@example.com",
+    "password": "a123456!"
+}
+
+# {
+#     "email": "ozeriyarin@gmail.com",
+#     "password": "NewSecure123!"
+# }
+
+
+###
+
+# Destroy session (Logout)
+DELETE http://localhost:8000/api/v1/auth/sessions/
+Content-Type: application/json
+
+###
+
+# ============ TOKEN MANAGEMENT ============
+
+# Refresh access token
+# IMPORTANT: After logging in via /api/v1/auth/sessions/, copy the 'refresh' cookie from the response
+# Look for 'Set-Cookie: refresh=xxxxx' in the response headers
+# Then paste it in the Cookie header below
+POST http://localhost:8000/api/v1/auth/tokens/refresh/
+Content-Type: application/json
+Cookie: refresh=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc2OTA3MjI0NiwiaWF0IjoxNzY4OTg1ODQ2LCJqdGkiOiI0ODg1YjhkNGQ5ODU0YTExOWQwNGFhM2E2ZDA5NWRjMSIsInVzZXJfaWQiOiIxIn0.cgSoTMNM4p2CI5DiEzVCXF93D7tTy5H58X2dQVYF0BQ
+
+
+
+###
+
+# ============ TWO-FACTOR AUTHENTICATION ============
+
+# Request 2FA code via email
+POST http://localhost:8000/api/v1/auth/2fa/
+Content-Type: application/json
+
+{
+    "email": "ozeriyarin@gmail.com",
+    "password": "a123456!",
+    "send_method": "email"
+}
+
+###
+
+# Request 2FA code via SMS
+POST http://localhost:8000/api/v1/auth/2fa/
+Content-Type: application/json
+
+{
+    "email": "ozeriyarin@gmail.com",
+    "password": "a123456!",
+    "send_method": "sms"
+}
+
+###
+
+# Verify 2FA code for login
+# IMPORTANT: After calling the 2FA request above, copy the 'sessionid' cookie from the response
+# In VS Code REST Client: Look for 'Set-Cookie: sessionid=xxxxx' in the response headers
+# Then paste it in the Cookie header below
+POST http://localhost:8000/api/v1/auth/2fa/verify/
+Content-Type: application/json
+Cookie: sessionid=ospfrebrfd6yxn0vhg6h76j8ly8nrpj4
+
+{
+    "code": "938525",
+    "code_type": "login"
+}
+
+###
+
+# Verify 2FA code for signup
+POST http://localhost:8000/api/v1/auth/2fa/verify/
+Content-Type: application/json
+
+{
+    "code": "123456",
+    "code_type": "signup"
+}
+
+###
+
+# ============ PASSWORD MANAGEMENT ============
+
+# Change password (requires authentication - user must be logged in)
+# Get the access token from the login response cookies and add it here:
+# Cookie: access=<your_access_token_here>
+PUT http://localhost:8000/api/v1/auth/password/
+Content-Type: application/json
+Cookie: access=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4OTg5ODU5LCJpYXQiOjE3Njg5ODYyNTksImp0aSI6ImM3NmUwMjRiMjMyMjQ5ZmNiYTY3NzM3NjZlNjc3MjE5IiwidXNlcl9pZCI6IjEifQ.rDX1HBF8eh4SJnhA-9gjaQ_2f9j7vrBgzdRXAFTo_14
+
+{
+    "old_password": "a123456!",     
+    "new_password": "NewSecure123!",
+    "confirm_new_password": "NewSecure123!"
+}
+
+###
+
+# ============ TOTP/QR CODE ============
+
+# Get QR code for TOTP setup
+GET http://localhost:8000/api/v1/auth/users/1/qr-code/
+Content-Type: application/json
+
+###
+
+########################### modules API calls ###########################
+
+    # ============ MODULES CRUD ============
+
+    # List all modules (GET)
+    GET http://localhost:8000/api/v1/modules/
+
+    ###
+
+    # Create a new module (POST)
+    POST http://localhost:8000/api/v1/modules/
+    Content-Type: application/json
+
+    {
+        "module_name": "New Module",
+        "module_description": "Description for new module"
+    }
+
+    ###
+
+    # Get specific module details (GET)
+    GET http://localhost:8000/api/v1/modules/9/
+
+    ###
+
+    # Update a module (PUT)
+    PUT http://localhost:8000/api/v1/modules/9/
+    Content-Type: application/json
+
+    {
+        "module_name": "Updated Module Name",
+        "module_description": "Updated description for the module"
+    }
+
+    ###
+
+    # Partially update a module (PATCH)
+    PATCH http://localhost:8000/api/v1/modules/9/
+    Content-Type: application/json
+
+    {
+        "module_description": "Only updating description"
+    }
+
+    ###
+
+    # Delete a module (DELETE)
+    DELETE http://localhost:8000/api/v1/modules/9/
+
+    ###
+
+    # ============ CLINIC MODULES ============
+
+    # List all modules for a clinic (GET)
+    GET http://localhost:8000/api/v1/clinics/1/modules/
+
+    ###
+
+    # Add a module to a clinic (POST)
+    POST http://localhost:8000/api/v1/clinics/1/modules/
+    Content-Type: application/json
+
+    {
+        "module_id": 7
+    }
+
+    ###
+
+    # Get specific clinic module details (GET)
+    GET http://localhost:8000/api/v1/clinics/1/modules/4/
+
+    ###
+
+    # Toggle clinic module active status (PATCH - no body)
+    PATCH http://localhost:8000/api/v1/clinics/1/modules/4/
+
+    ###
+
+    # Set clinic module active status explicitly (PATCH - with body)
+    PATCH http://localhost:8000/api/v1/clinics/1/modules/4/
+    Content-Type: application/json
+
+    {
+        "is_active": false
+    }
+
+    ###
+
+    # Remove module from clinic (DELETE)
+    DELETE http://localhost:8000/api/v1/clinics/1/modules/7/
+
+    ###
+
+    # ============ PATIENT MODULES ============
+
+    # List all modules for a patient (GET)
+    GET http://localhost:8000/api/v1/clinics/1/patients/5/modules/
+
+    ###
+
+    # Add a module to a patient (POST)
+    POST http://localhost:8000/api/v1/clinics/1/patients/5/modules/
+    Content-Type: application/json
+
+    {
+        "module_id": 4
+    }
+
+    ###
+
+    # Get specific patient module details (GET)
+    GET http://localhost:8000/api/v1/clinics/1/patients/5/modules/3/
+
+    ###
+
+    # Toggle patient module active status (PATCH - no body)
+    PATCH http://localhost:8000/api/v1/clinics/1/patients/5/modules/3/
+
+    ###
+
+    # Set patient module active status explicitly (PATCH - with body)
+    PATCH http://localhost:8000/api/v1/clinics/1/patients/5/modules/3/
+    Content-Type: application/json
+
+    {
+        "is_active": true
+    }
+
+    ###
+
+    # Remove module from patient (DELETE)
+    DELETE http://localhost:8000/api/v1/clinics/1/patients/5/modules/4/
+
+    ###
+
+############################ users api calls ############################
+
+# ============ USER CRUD ============
+
+# List all users (GET) - Staff only (paginated)
+GET http://localhost:8000/api/v1/users/
+Content-Type: application/json
+
+###
+
+# List users filtered by role (GET)
+GET http://localhost:8000/api/v1/users/?role=DOCTOR
+Content-Type: application/json
+
+###
+
+# List users with pagination (GET)
+GET http://localhost:8000/api/v1/users/?role=RESEARCH_PATIENT&page=1&page_size=10
+Content-Type: application/json
+
+###
+
+# Create a new user/patient (POST) - Doctor/Clinic Manager
+POST http://localhost:8000/api/v1/users/
+Content-Type: application/json
+
+{
+    "email": "newpatient2@example.com",
+    "first_name": "New",
+    "last_name": "Patient",
+    "phone_number": "5551234568"
+}
+
+###
+
+# Create a research patient with password (POST) - Doctor in research clinic
+POST http://localhost:8000/api/v1/users/
+Content-Type: application/json
+
+{
+    "email": "researchpatient@example.com",
+    "first_name": "Research",
+    "last_name": "Patient",
+    "phone_number": "5559876543",
+    "password": "a123456!",
+    "confirm_password": "a123456!"
+}
+
+###
+
+# ============ CURRENT USER ============
+
+# Get current authenticated user's profile (GET)
+GET http://localhost:8000/api/v1/users/me/
+Content-Type: application/json
+
+###
+
+# ============ USER DETAILS ============
+
+# Get specific user details (GET)
+GET http://localhost:8000/api/v1/users/5/
+Content-Type: application/json
+
+###
+
+# Full update user (PUT) - All fields required
+PUT http://localhost:8000/api/v1/users/5/
+Content-Type: application/json
+
+{
+    "email": "updated@example.com",
+    "first_name": "Updated",
+    "last_name": "Name",
+    "phone_number": "5551112222"
+}
+
+###
+
+# Partial update user (PATCH) - Only send fields to change
+PATCH http://localhost:8000/api/v1/users/5/
+Content-Type: application/json
+
+{
+    "phone_number": "5553334444"
+}
+
+###
+
+# Partial update user - name only (PATCH)
+PATCH http://localhost:8000/api/v1/users/5/
+Content-Type: application/json
+
+{
+    "first_name": "NewFirst",
+    "last_name": "NewLast"
+}
+
+###
+
+# Delete user permanently (DELETE) - Admin only
+DELETE http://localhost:8000/api/v1/users/12/
+Content-Type: application/json
+
+###
+
+# Remove user from clinic (DELETE) - Clinic Manager/Doctor
+DELETE http://localhost:8000/api/v1/users/12/
+Content-Type: application/json
+
+###
+
+############################ clinics api calls ############################
+
+    # ============ CLINIC CRUD ============
+
+    # List all clinics (GET) - Staff only
+    GET http://localhost:8000/api/v1/clinics/
+    Content-Type: application/json
+
+    ###
+
+    # Create a new clinic (POST) - Staff only
+    POST http://localhost:8000/api/v1/clinics/
+    Content-Type: application/json
+
+    {
+        "clinic_name": "Test Clinic",
+        "clinic_url": "https://testclinic.com",
+        "clinic_image_url": "https://example.com/logo.jpg",
+        "clinic_type": "Research",
+        "manager_first_name": "Jane",
+        "manager_last_name": "Smith",
+        "manager_email": "jane.smith@example.com",
+        "manager_phone_number": "7654329876",
+        "selected_modules": [1, 2, 3, 4, 5]
+    }
+
+    ###
+
+    # Get specific clinic details (GET) - Any authenticated user
+    GET http://localhost:8000/api/v1/clinics/9/
+    Content-Type: application/json
+
+    ###
+
+    # Update a clinic (PUT) - Staff or Clinic Manager
+    PUT http://localhost:8000/api/v1/clinics/9/
+    Content-Type: application/json
+
+    {
+        "clinic_name": "Updated Clinic Name",
+        "clinic_url": "https://updatedclinic.com",
+        "clinic_type": "Default",
+        "clinic_image_url": "https://example.com/newlogo.jpg",
+        "selected_modules": [1, 2, 3]
+    }
+
+    ###
+
+    # Partially update a clinic (PUT with partial fields) - Staff or Clinic Manager
+    PUT http://localhost:8000/api/v1/clinics/9/
+    Content-Type: application/json
+
+    {
+        "clinic_type": "Research",
+        "selected_modules": [1, 2, 3, 4, 5]
+    }
+
+    ###
+
+    # Delete a clinic (DELETE) - Staff only
+    DELETE http://localhost:8000/api/v1/clinics/9/
+    Content-Type: application/json
+
+    ###
+
+
+############################ medications CRUD api calls ############################
+
+    # Admin: View all medications list
+    GET http://localhost:8000/api/v1/medications/
+    Content-Type: application/json
+
+    ###
+
+    # Clinic Manager/Doctor: View clinic medications list
+    GET http://localhost:8000/api/v1/medications/?clinic_id=1
+    Content-Type: application/json
+
+    ###
+
+    # Doctor: View patient medications list
+    GET http://localhost:8000/api/v1/medications/?clinic_id=1&patient_id=5
+    Content-Type: application/json
+
+    ###
+
+    # Admin: Create base medication
+    POST http://localhost:8000/api/v1/medications/
+    Content-Type: application/json
+
+    {
+        "medication_name": "TEST",
+        "medication_form": "Tablet",
+        "medication_unit": "mg"
+    }
+
+    ###
+
+    # Clinic Manager: Add medication to clinic
+    POST http://localhost:8000/api/v1/medications/
+    Content-Type: application/json
+
+    {
+        "medication_name": "TEST",
+        "medication_form": "Tablet",
+        "medication_unit": "mg",
+        "clinic_id": 1
+    }
+
+    ###
+
+    # Doctor: Assign medication to patient
+    POST http://localhost:8000/api/v1/medications/
+    Content-Type: application/json
+
+    {
+        "medication_name": "TEST",
+        "medication_form": "Tablet",
+        "medication_unit": "mg",
+        "clinic_id": 1,
+        "patient_id": 5
+    }
+
+    ###
+
+    # Admin: Get base medication details
+    GET http://localhost:8000/api/v1/medications/1999022183/
+    Content-Type: application/json
+
+    ###
+
+    # Clinic Manager: Get clinic medication details
+    GET http://localhost:8000/api/v1/medications/1999022183/?clinic_id=1
+    Content-Type: application/json
+
+    ###
+
+    # Doctor/Patient: Get patient medication details with schedule
+    GET http://localhost:8000/api/v1/medications/1999022183/?clinic_id=1&patient_id=5
+    Content-Type: application/json
+
+    ###
+
+    # Admin: Update base medication
+    PUT http://localhost:8000/api/v1/medications/1999022183/
+    Content-Type: application/json
+
+    {
+        "name": "Aspirin Updated",
+        "form": "Capsule",
+        "unit": "mg"
+    }
+
+    ###
+
+    # Doctor: Assign/Update patient medication schedule
+    PUT http://localhost:8000/api/v1/medications/1999022183/?clinic_id=1&patient_id=5
+    Content-Type: application/json
+
+    {
+        "frequency": "daily",
+        "frequency_data": {
+            "dates": [],
+            "days": [],
+            "time": ["08:00", "20:00"]
+        },
+        "start_date": "2026-01-15 08:00:00",
+        "end_date": "2026-02-15 08:00:00",
+        "dosage": "100mg"
+    }
+
+    ###
+
+    # Doctor: Assign/Update patient medication with weekly schedule
+    PUT http://localhost:8000/api/v1/medications/1999022183/?clinic_id=1&patient_id=5
+    Content-Type: application/json
+
+    {
+        "frequency": "weekly",
+        "frequency_data": {
+            "dates": [],
+            "days": ["monday", "wednesday", "friday"],
+            "time": ["10:00", "14:00"]
+        },
+        "start_date": "2026-01-15 10:00:00",
+        "end_date": "2026-02-15 10:00:00",
+        "dosage": "1 tablet"
+    }
+
+    ###
+
+    # Admin: Delete base medication
+    DELETE http://localhost:8000/api/v1/medications/1999022183/
+
+    ###
+
+    # Clinic Manager: Remove medication from clinic
+    DELETE http://localhost:8000/api/v1/medications/1999022183/?clinic_id=1
+
+    ###
+
+    # Doctor: Remove medication from patient
+    DELETE http://localhost:8000/api/v1/medications/1999022183/?clinic_id=1&patient_id=5
+
+    ###
+
+    ############################ medication bundles API calls ############################
+
+    # Admin: Get all bundles across all clinics
+    GET http://localhost:8000/api/v1/medications/bundles/
+
+    ###
+
+    # Clinic Manager/Doctor: Get bundles for a specific clinic
+    GET http://localhost:8000/api/v1/medications/bundles/?clinic_id=1
+
+    ###
+
+    # Doctor: Get patient's assigned bundles
+    GET http://localhost:8000/api/v1/medications/bundles/?clinic_id=1&patient_id=5
+
+    ###
+
+    # Patient: Get their own assigned bundles
+    GET http://localhost:8000/api/v1/medications/bundles/?clinic_id=1&patient_id=5
+
+    ###
+
+    # Clinic Manager: Create a new bundle
+    POST http://localhost:8000/api/v1/medications/bundles/?clinic_id=1
+    Content-Type: application/json
+
+    {
+        "bundle_name": "Morning Medications",
+        "medication_ids": ["1000007960", "1000007961", "1000007962"]
+    }
+
+    ###
+
+    # Admin: Get specific bundle details
+    GET http://localhost:8000/api/v1/medications/bundles/1/
+
+    ###
+
+    # Clinic Manager: Get bundle details
+    GET http://localhost:8000/api/v1/medications/bundles/1/?clinic_id=1
+
+    ###
+
+    # Doctor: Get bundle details
+    GET http://localhost:8000/api/v1/medications/bundles/1/?clinic_id=1
+
+    ###
+
+    # Clinic Manager: Update bundle name and medications
+    PUT http://localhost:8000/api/v1/medications/bundles/1/?clinic_id=1
+    Content-Type: application/json
+
+    {
+        "bundle_name": "Updated Morning Medications",
+        "medication_ids": ["1000007960", "1000007961", "1000007962", "1000007963"]
+    }
+
+    ###
+
+    # Doctor: Assign bundle to patient
+    PUT http://localhost:8000/api/v1/medications/bundles/1/?clinic_id=1&patient_id=5
+    Content-Type: application/json
+
+    ###
+
+    # Admin: Delete bundle
+    DELETE http://localhost:8000/api/v1/medications/bundles/1/
+
+    ###
+
+    # Clinic Manager: Delete bundle from clinic
+    DELETE http://localhost:8000/api/v1/medications/bundles/1/?clinic_id=1
+
+    ###
+
+    # Doctor: Remove bundle from patient
+    DELETE http://localhost:8000/api/v1/medications/bundles/1/?clinic_id=1&patient_id=5
+
+    ###
+
+    ############################ medication reports API calls ############################
+
+    # Admin: Get all medication reports (no params needed)
+    GET http://localhost:8000/api/v1/medication-reports/
+
+    ###
+
+    # Clinic Manager: Get reports for their clinic (requires clinic_id)
+    GET http://localhost:8000/api/v1/medication-reports/?clinic_id=1
+
+    ###
+
+    # Doctor: Get reports for a specific patient (requires clinic_id and patient_id)
+    GET http://localhost:8000/api/v1/medication-reports/?clinic_id=1&patient_id=5
+
+    ###
+
+    # Patient: Get their own reports (requires clinic_id and patient_id)
+    GET http://localhost:8000/api/v1/medication-reports/?clinic_id=1&patient_id=5
+
+    ###
+
+    # Patient/Doctor: Create medication report - log intake (query params + body)
+    POST http://localhost:8000/api/v1/medication-reports/?clinic_id=1&patient_id=5
+    Content-Type: application/json
+
+    {
+        "medication_id": "1000007960",
+        "timestamp": "2026-01-14 10:30:00"
+    }
+
+    ###
+
+    # Patient/Doctor: Create medication report without timestamp (will use current time)
+    POST http://localhost:8000/api/v1/medication-reports/?clinic_id=1&patient_id=5
+    Content-Type: application/json
+
+    {
+        "medication_id": "1000007960"
+    }
+
+    ###
+
+
+
+########################### activities CRUD api calls ###########################
+
+    # Doctor/Patient: View patient activities list
+    GET http://localhost:8000/api/v1/activities/?clinic_id=1&patient_id=5
+    Content-Type: application/json
+
+    ###
+
+    # Clinic Manager: View clinic activities list
+    GET http://localhost:8000/api/v1/activities/?clinic_id=1
+    Content-Type: application/json
+
+    ###
+
+    # Doctor/Patient: View patient activity details
+    GET http://localhost:8000/api/v1/activities/10/?clinic_id=1&patient_id=5
+    Content-Type: application/json
+
+    ###
+
+    # Doctor: Assign/Update activity for patient (create or update PatientActivity)
+    PUT http://localhost:8000/api/v1/activities/10/?clinic_id=1&patient_id=5
+    Content-Type: application/json
+
+    {
+        "frequency": "weekly",
+        "frequency_data": {
+            "dates": [],
+            "days": ["monday", "wednesday", "friday"],
+            "time": ["08:00", "12:00"]
+        },
+        "start_date": "2026-01-15 08:00:00",
+        "end_date": "2026-02-15 08:00:00"
+    }
+
+    ###
+
+    # Doctor: Delete patient activity
+    DELETE http://localhost:8000/api/v1/activities/10/?clinic_id=1&patient_id=5
+
+    ###
+
+    # Clinic Manager: View clinic activity
+    GET http://localhost:8000/api/v1/activities/10/?clinic_id=1
+    Content-Type: application/json
+
+    ###
+
+    # Clinic Manager: Remove activity from clinic
+    DELETE http://localhost:8000/api/v1/activities/10/?clinic_id=1
+
+    ###
+
+    # Admin: View base activities list
+    GET http://localhost:8000/api/v1/activities/
+    Content-Type: application/json
+    ###
+
+    # Admin: Create base activity
+    POST http://localhost:8000/api/v1/activities/
+    Content-Type: application/json
+
+    {
+        "clinic_id":"1",
+        "patient_id":"5" ,
+        "name": "Morning Walk",
+        "description": "A refreshing walk in the morning."
+    }
+
+    ###
+
+    # Admin: View base activity
+    GET http://localhost:8000/api/v1/activities/9/
+    Content-Type: application/json
+
+    ###
+
+    # Admin: Update base activity
+    PUT http://localhost:8000/api/v1/activities/8/
+    Content-Type: application/json
+
+    {
+        "name": "Updated Activity Name",
+        "description": "Updated description"
+    }
+
+    ###
+
+    # Admin: Delete base activity
+    DELETE http://localhost:8000/api/v1/activities/9/
+
+    ###
+
+
+
+    ############################ activity bundles API calls ############################
+
+    # Admin: Get all bundles across all clinics
+    GET http://localhost:8000/api/v1/activities/bundles/
+
+    ###
+
+    # Clinic Manager/Doctor: Get bundles for a specific clinic
+    GET http://localhost:8000/api/v1/activities/bundles/?clinic_id=1
+
+    ###
+
+    # Doctor: Get patient's assigned bundles
+    GET http://localhost:8000/api/v1/activities/bundles/?clinic_id=1&patient_id=5
+
+    ###
+
+    # Patient: Get their own assigned bundles
+    GET http://localhost:8000/api/v1/activities/bundles/?clinic_id=1&patient_id=5
+
+    ###
+
+    # Clinic Manager: Create a new bundle
+    POST http://localhost:8000/api/v1/activities/bundles/?clinic_id=1
+    Content-Type: application/json
+
+    {
+        "bundle_name": "Morning Routine",
+        "activity_ids": [1, 2, 3]
+    }
+
+    ###
+
+    # Admin: Get specific bundle details
+    GET http://localhost:8000/api/v1/activities/bundles/1/
+
+    ###
+
+    # Clinic Manager: Get bundle details
+    GET http://localhost:8000/api/v1/activities/bundles/1/?clinic_id=1
+
+    ###
+
+    # Doctor: Get bundle details
+    GET http://localhost:8000/api/v1/activities/bundles/1/?clinic_id=1
+
+    ###
+
+    # Clinic Manager: Update bundle name and activities
+    PUT http://localhost:8000/api/v1/activities/bundles/1/?clinic_id=1
+    Content-Type: application/json
+
+    {
+        "bundle_name": "Updated Morning Routine",
+        "activity_ids": [1, 2, 3, 10]
+    }
+
+    ###
+
+    # Doctor: Assign bundle to patient
+    PUT http://localhost:8000/api/v1/activities/bundles/1/?clinic_id=1&patient_id=5
+    Content-Type: application/json
+
+    ###
+
+    # Admin: Delete bundle
+    DELETE http://localhost:8000/api/v1/activities/bundles/1/
+
+    ###
+
+    # Clinic Manager: Delete bundle from clinic
+    DELETE http://localhost:8000/api/v1/activities/bundles/1/?clinic_id=1
+
+    ###
+
+    # Doctor: Remove bundle from patient
+    DELETE http://localhost:8000/api/v1/activities/bundles/1/?clinic_id=1&patient_id=5
+
+    ###
+
+
+    ############################ activity reports API calls ############################
+
+    # Admin: Get all activity reports (no params needed)
+    GET http://localhost:8000/api/v1/activity-reports/
+
+    ###
+
+    # Clinic Manager: Get reports for their clinic (requires clinic_id)
+    GET http://localhost:8000/api/v1/activity-reports/?clinic_id=1
+
+    ###
+
+    # Doctor: Get reports for a specific patient (requires clinic_id and patient_id)
+    GET http://localhost:8000/api/v1/activity-reports/?clinic_id=1&patient_id=5
+
+    ###
+
+    # Patient: Get their own reports (requires clinic_id and patient_id)
+    GET http://localhost:8000/api/v1/activity-reports/?clinic_id=1&patient_id=5
+
+    ###
+
+    # Patient/Doctor: Create activity report - log completion (query params + body)
+    POST http://localhost:8000/api/v1/activity-reports/?clinic_id=1&patient_id=5
+    Content-Type: application/json
+
+    {
+        "activity_id": 3,
+        "timestamp": "2026-01-14 10:30:00"
+    }
+
+    ###
+
+    # Patient/Doctor: Create activity report without timestamp (will use current time)
+    POST http://localhost:8000/api/v1/activity-reports/?clinic_id=1&patient_id=5
+    Content-Type: application/json
+
+    {
+        "activity_id": 3
+    }
+
+    ###
+
+
+############################# notifications API calls ##############################
+
+    POST {{$dotenv NGROK_URL}}/api/v1/notifications/set/notification/
+    Content-Type: application/json
+
+    {
+    "clinic_id": 1,
+    "patient_id": 5,
+    "event_type": "activity",
+    "event_id": "3",
+    "frequency": "weekly",
+        "frequency_data": {
+            "dates": [],
+            "days": ["monday", "wednesday", "friday"],
+            "time": ["08:30", "12:00"]
+        },
+    "start_date_time": "2025-07-01 08:00:00",
+    "end_date_time": "2025-08-01 08:00:00"
+    }
+
+############################ fileshare api calls ############################
+
+# ============ FILE SHARE - LIST & UPLOAD ============
+
+# Admin/Staff: View all files in the system
+GET http://localhost:8000/api/v1/fileshare/
+Content-Type: application/json
+
+###
+
+# Clinic Manager: View files for their clinic
+GET http://localhost:8000/api/v1/fileshare/?clinic_id=1
+Content-Type: application/json
+
+###
+
+# Doctor: View files for specific patient
+GET http://localhost:8000/api/v1/fileshare/?clinic_id=1&patient_id=5
+Content-Type: application/json
+
+###
+
+# Patient: View their own files (no params needed)
+GET http://localhost:8000/api/v1/fileshare/
+Content-Type: application/json
+
+###
+
+# Doctor: Upload files for a patient
+POST http://localhost:8000/api/v1/fileshare/
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="clinic_id"
+
+1
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="patient_id"
+
+5
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="files"; filename="medical_report.pdf"
+Content-Type: application/pdf
+
+< ./path/to/medical_report.pdf
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="files"; filename="xray_image.jpg"
+Content-Type: image/jpeg
+
+< ./path/to/xray_image.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+# Patient: Upload their own files
+POST http://localhost:8000/api/v1/fileshare/
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="clinic_id"
+
+1
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="patient_id"
+
+5
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="files"; filename="lab_results.pdf"
+Content-Type: application/pdf
+
+< ./path/to/lab_results.pdf
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+# ============ FILE SHARE - VIEW & DELETE ============
+
+# View specific file (get base64 content)
+GET http://localhost:8000/api/v1/fileshare/1/
+Content-Type: application/json
+
+###
+
+# Doctor: Delete file they uploaded
+DELETE http://localhost:8000/api/v1/fileshare/1/
+Content-Type: application/json
+
+###
+
+# Patient: Delete their own file
+DELETE http://localhost:8000/api/v1/fileshare/2/
+Content-Type: application/json
+
+###
+
+# Admin: Delete any file
+DELETE http://localhost:8000/api/v1/fileshare/3/
+Content-Type: application/json
+
+###
