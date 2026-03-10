@@ -1,0 +1,2 @@
+release: python manage.py migrate
+web: gunicorn generic3.wsgi:application --timeout 120
